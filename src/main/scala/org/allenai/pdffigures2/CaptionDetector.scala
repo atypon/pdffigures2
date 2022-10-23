@@ -169,18 +169,22 @@ object CaptionDetector extends Logging {
               if (line.words.size > 2 &&
                   line.words(1).text == ".") {
                 (firstWord + ".", 2)
-              } else if ((line.text.replace(" ","").toLowerCase() indexOf "figure")==0){
-                (firstWord, 6) 
-              }else if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0 ){
-              (firstWord, 5)
-            }
+              }
               else {
                 (firstWord, 1)
               }
+
             val captionStartMatchOpt = captionStartRegex.findFirstMatchIn(firstWord)
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
               val captionStartMatch = captionStartMatchOpt.get
-              val numberStr = line.words(wordNumber).text
+              val (numberStr) =
+              if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0 ){
+              (line.text.replace(" ","").toLowerCase().substring(5))
+              }
+              else if ((line.text.replace(" ","").toLowerCase()  indexOf "figure")==0 ){
+                            (line.text.replace(" ","").toLowerCase().substring(6))
+                            }
+              else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)
               val saneHeight = line.boundary.height < MaxHeightForCaptionLines
               if (!saneHeight) {

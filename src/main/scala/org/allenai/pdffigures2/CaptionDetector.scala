@@ -104,7 +104,7 @@ object CaptionDetector extends Logging {
   }
 
   // Words that might start captions
-  private val captionStartRegex = """^(Figure.|Figure|FIGURE|Table|TABLE||Fig.|Fig|FIG.|FIG)$""".r
+  private val captionStartRegex = """^(Figure.|Figure|FIGURE|Table|TABLE|Fig.|Fig|FIG.|FIG)$""".r
   // Finds caption number that might follow the given word, occasionally this number will be
   // incorrectly chunked with the following word if ending with : or '.' so we allow following text
   private val captionNumberRegex =
@@ -153,18 +153,33 @@ object CaptionDetector extends Logging {
         var paragraphStart = true
         paragraph.lines.view.zipWithIndex.flatMap {
           case (line, lineNum) =>
-            val firstWord = line.words.head.text
+            val (firstWord) =
+             if ((line.text.replace(" ","") indexOf "FIGURE")==0 | (line.text.replace(" ","") indexOf "Figure")==0){
+              ("FIGURE")
+            }
+            else if ((line.text.replace(" ","") indexOf "TABLE")==0 | (line.text.replace(" ","") indexOf "Table")==0 ){
+              ("TABLE")
+            }
+            else{
+              (line.words.head.text)
+            }
             // PDFBox might add a space between the 'Fig' and '.', due to imperfect spacing
             // deductions in rare cases, we handle this by grouping the two together
             val (headerStr, wordNumber) =
               if (line.words.size > 2 &&
                   line.words(1).text == ".") {
                 (firstWord + ".", 2)
-              } else {
+              } else if ((line.text.replace(" ","") indexOf "FIGURE")==0 | (line.text.replace(" ","") indexOf "Figure")==0 ){
+                (firstWord, 6) 
+              }else if ((line.text.replace(" ","") indexOf "TABLE")==0 | (line.text.replace(" ","") indexOf "Table")==0){
+              (firstWord, 5)
+            }
+              else {
                 (firstWord, 1)
               }
             val captionStartMatchOpt = captionStartRegex.findFirstMatchIn(firstWord)
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
+              logger.info(firstWord)
               val captionStartMatch = captionStartMatchOpt.get
               val numberStr = line.words(wordNumber).text
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)

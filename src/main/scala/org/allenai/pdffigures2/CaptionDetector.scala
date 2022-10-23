@@ -154,10 +154,10 @@ object CaptionDetector extends Logging {
         paragraph.lines.view.zipWithIndex.flatMap {
           case (line, lineNum) =>
             val (firstWord) =
-             if ((line.text.replace(" ","") indexOf "FIGURE")==0 | (line.text.replace(" ","") indexOf "Figure")==0){
+             if ((line.text.replace(" ","").toLowerCase() indexOf "figure") == 0){
               ("FIGURE")
             }
-            else if ((line.text.replace(" ","") indexOf "TABLE")==0 | (line.text.replace(" ","") indexOf "Table")==0 ){
+            else if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0){
               ("TABLE")
             }
             else{
@@ -169,9 +169,9 @@ object CaptionDetector extends Logging {
               if (line.words.size > 2 &&
                   line.words(1).text == ".") {
                 (firstWord + ".", 2)
-              } else if ((line.text.replace(" ","") indexOf "FIGURE")==0 | (line.text.replace(" ","") indexOf "Figure")==0 ){
+              } else if ((line.text.replace(" ","").toLowerCase() indexOf "figure")==0){
                 (firstWord, 6) 
-              }else if ((line.text.replace(" ","") indexOf "TABLE")==0 | (line.text.replace(" ","") indexOf "Table")==0){
+              }else if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0 ){
               (firstWord, 5)
             }
               else {
@@ -179,7 +179,6 @@ object CaptionDetector extends Logging {
               }
             val captionStartMatchOpt = captionStartRegex.findFirstMatchIn(firstWord)
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
-              logger.info(firstWord)
               val captionStartMatch = captionStartMatchOpt.get
               val numberStr = line.words(wordNumber).text
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)

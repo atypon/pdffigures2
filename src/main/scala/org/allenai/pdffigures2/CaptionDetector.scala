@@ -188,9 +188,6 @@ object CaptionDetector extends Logging {
                             }
               else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)
-              println(line.text)
-              println(numberStr)
-              println(captionEndMatchOp)
               val saneHeight = line.boundary.height < MaxHeightForCaptionLines
               if (!saneHeight) {
                 logger.debug("Warning: Crazy height for caption line, skipping")

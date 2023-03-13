@@ -107,8 +107,10 @@ object CaptionDetector extends Logging {
   private val captionStartRegex = """^(Figure.|Figure|FIGURE|Table|TABLE|Fig.|Fig|FIG.|FIG)$""".r
   // Finds caption number that might follow the given word, occasionally this number will be
   // incorrectly chunked with the following word if ending with : or '.' so we allow following text
+  // Made all regex characters small letter because i use tolower TODO
   private val captionNumberRegex =
-    """^([1-9][0-9]*.[1-9][0-9]*|[1-9][0-9]*|[IVX]+|[1-9I][0-9I]*|[A-D].[1-9][0-9]*)($|:|.)?""".r
+    """^([0-9][0-9]*.[0-9][0-9]*|[0-9][0-9]*|[ivx]+|[0-9i][0-9i]*|[a-do][0-9]*.[0-9][0-9]*)($|:|.)?""".r
+
 
   /** Identify where the captions are inside a sequence of pages.
     *
@@ -186,6 +188,9 @@ object CaptionDetector extends Logging {
                             }
               else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)
+              println(line.text)
+              println(numberStr)
+              println(captionEndMatchOp)
               val saneHeight = line.boundary.height < MaxHeightForCaptionLines
               if (!saneHeight) {
                 logger.debug("Warning: Crazy height for caption line, skipping")

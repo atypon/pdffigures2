@@ -109,7 +109,7 @@ object CaptionDetector extends Logging {
   // incorrectly chunked with the following word if ending with : or '.' so we allow following text
   // Made all regex characters small letter because i use tolower TODO
   private val captionNumberRegex =
-    """^([0-9][0-9]*.[0-9][0-9]*|[0-9][0-9]*|[ivx]+|[0-9i][0-9i]*|[a-do][0-9]*.[0-9][0-9]*)($|:|.)?""".r
+    """^([0-9][0-9]*.[0-9][0-9]*|[0-9][0-9]*|[IVX]+|[0-9I][0-9I]*|[A-DO][0-9]*.[0-9][0-9]*)($|:|.)?""".r
 
 
   /** Identify where the captions are inside a sequence of pages.
@@ -180,12 +180,12 @@ object CaptionDetector extends Logging {
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
               val captionStartMatch = captionStartMatchOpt.get
               val (numberStr) =
-              if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0 ){
-              (line.text.replace(" ","").toLowerCase().substring(5))
-              }
-              else if ((line.text.replace(" ","").toLowerCase()  indexOf "figure")==0 ){
-                            (line.text.replace(" ","").toLowerCase().substring(6))
-                            }
+                if ((line.text.replace(" ", "").toLowerCase() indexOf "table") == 0) {
+                  (line.text.replace(" ", "").substring(5))
+                }
+                else if ((line.text.replace(" ", "").toLowerCase() indexOf "figure") == 0) {
+                  (line.text.replace(" ", "").substring(6))
+                }
               else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)
               val saneHeight = line.boundary.height < MaxHeightForCaptionLines

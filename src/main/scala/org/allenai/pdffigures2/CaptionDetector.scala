@@ -109,7 +109,7 @@ object CaptionDetector extends Logging {
   // incorrectly chunked with the following word if ending with : or '.' so we allow following text
   // Made all regex characters small letter because i use tolower TODO
   private val captionNumberRegex =
-    """^([0-9][0-9]*.[0-9][0-9]*|[0-9][0-9]*|[IVX]+|[0-9I][0-9I]*|[A-DO][0-9]*.[0-9][0-9]*)($|:|.)?""".r
+    """^([0-9][0-9]*.[0-9][0-9]*|[0-9][0-9]*|[IVX]+|[0-9I][0-9I]*|[A-DO][A-DO]*[0-9]*.[0-9][0-9]*)($|:|.)?""".r
 
 
   /** Identify where the captions are inside a sequence of pages.

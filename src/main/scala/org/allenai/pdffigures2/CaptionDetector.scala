@@ -179,12 +179,13 @@ object CaptionDetector extends Logging {
             val captionStartMatchOpt = captionStartRegex.findFirstMatchIn(firstWord)
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
               val captionStartMatch = captionStartMatchOpt.get
+              val line_no_spaces = line.text.filterNot(_.isWhitespace).replaceAll("\\u00a0", "")
               val (numberStr) =
-                if ((line.text.replace(" ", "").toLowerCase() indexOf "table") == 0) {
-                  (line.text.replace(" ", "").substring(5))
+                if ((line_no_spaces.toLowerCase() indexOf "table") == 0) {
+                  (line_no_spaces.substring(5))
                 }
-                else if ((line.text.replace(" ", "").toLowerCase() indexOf "figure") == 0) {
-                  (line.text.replace(" ", "").substring(6))
+                else if ((line_no_spaces.toLowerCase() indexOf "figure") == 0) {
+                  (line_no_spaces.substring(6))
                 }
               else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)

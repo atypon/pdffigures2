@@ -125,7 +125,8 @@ private class TextExtractor extends PDFTextStripper with Logging {
       val unicode = pos.getUnicode
       if (unicode.length == 1 &&
           (Character.isISOControl(unicode.charAt(0)) ||
-          Character.isWhitespace(unicode.charAt(0)))) {
+          Character.isWhitespace(unicode.charAt(0))) ||
+          unicode.charAt(0) == '\u00A0') {
         if (stringBuilder.nonEmpty) {
           addText()
           wordTextPositions.clear()

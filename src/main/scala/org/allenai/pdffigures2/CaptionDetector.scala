@@ -155,11 +155,12 @@ object CaptionDetector extends Logging {
         var paragraphStart = true
         paragraph.lines.view.zipWithIndex.flatMap {
           case (line, lineNum) =>
+            val line_no_spaces = line.text.filterNot(_.isWhitespace)
             val (firstWord) =
-             if ((line.text.replace(" ","").toLowerCase() indexOf "figure") == 0){
+             if ((line_no_spaces.toLowerCase() indexOf "figure") == 0){
               ("FIGURE")
             }
-            else if ((line.text.replace(" ","").toLowerCase()  indexOf "table")==0){
+            else if ((line_no_spaces.toLowerCase()  indexOf "table")==0){
               ("TABLE")
             }
             else{
@@ -179,7 +180,6 @@ object CaptionDetector extends Logging {
             val captionStartMatchOpt = captionStartRegex.findFirstMatchIn(firstWord)
             val candidates = if (captionStartMatchOpt.nonEmpty && line.words.size > 1) {
               val captionStartMatch = captionStartMatchOpt.get
-              val line_no_spaces = line.text.filterNot(_.isWhitespace).replaceAll("\\u00a0", "")
               val (numberStr) =
                 if ((line_no_spaces.toLowerCase() indexOf "table") == 0) {
                   (line_no_spaces.substring(5))
@@ -189,9 +189,6 @@ object CaptionDetector extends Logging {
                 }
               else{(line.words(wordNumber).text)}
               val captionEndMatchOp = captionNumberRegex.findFirstMatchIn(numberStr)
-              if ((line_no_spaces.toLowerCase() indexOf "figure") == 0) {
-                println(line_no_spaces.substring(6))
-              }
               val saneHeight = line.boundary.height < MaxHeightForCaptionLines
               if (!saneHeight) {
                 logger.debug("Warning: Crazy height for caption line, skipping")
